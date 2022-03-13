@@ -57,21 +57,17 @@ void test_input()
 void input(char data[]) {
   char ch = 0;
   char keycode = 0;
-  int index = 0;
+  char *dataPtr = data;
 
   do{
     keycode = get_input_keycode();
-    if(keycode == KEY_ENTER){
-      data[index] = '\0';
-      nl();
-      break;
-    }else{
-      ch = get_ascii_char(keycode);
-      putchar(2 * x + 160 * y ,ch);
-		  x++;
-      data[index] = ch;
-      index++;
-    }
+    ch = get_ascii_char(keycode);
+    if(ch == '\n') { ch = 0;}
+    putchar(2 * x + 160 * y ,ch);
+		x++;
+    *dataPtr++ = ch;
     sleep(CALC_SLEEP);
   }while(ch > 0);
+
+  nl(); 
 }

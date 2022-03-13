@@ -1,5 +1,9 @@
 /* stdout.h - Standard Output of MKS */
 #include "str.h"
+#define VGA_WIDTH 80
+#define VGA_HEIGHT 25
+
+void terminal_scroll_up();
 
 char* fb = (char*) 0xB8000;
 int x = 0;
@@ -7,7 +11,7 @@ int y = 0;
 
 void clrscr() {
     unsigned int j = 0;
-    while(j < 80 * 25 * 2) {
+    while(j < VGA_WIDTH * VGA_HEIGHT * 2) {
 		/* blank character */
 		fb[j] = ' ';
 		/* attribute-byte - light grey on black screen */

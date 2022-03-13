@@ -3,7 +3,7 @@ CC = gcc
 CFLAGS =  -m32 -fno-builtin -fno-stack-protector \
 			 -Wall -Wextra -Werror -c
 CEXTRAFLAGS = -nostdlib -nostdinc -nostartfiles -nodefaultlibs 
-LDFLAGS = -T link.ld -melf_i386
+LDFLAGS = -N -T link.ld -melf_i386
 AS = nasm
 ASFLAGS = -f elf32
 
