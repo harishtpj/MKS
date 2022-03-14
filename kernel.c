@@ -1,12 +1,33 @@
 /* MKS - Kernel File */
 #include "mks/stdin.h"
 
-void shell(char cmd[]) {
-    print("sysrt >>");
-    print(" ");
-    memset(cmd, 0, strlen(cmd));
-    input(cmd);
-    sleep(1);
+void shell();
+void exec(char cmd[]);
+void banner();
+
+int kernel() {
+    terminal_init();
+    clrscr();
+    banner();
+    nl();
+    
+    shell();
+    
+    return 0;
+}
+
+void shell() {
+    char cmd[30];
+
+    for(;;){
+        print("sysrt >> ");
+        memset(cmd, 0, strlen(cmd));
+        input(cmd);
+        exec(cmd);
+    }
+}
+
+void exec(char cmd[]) {
     if(strcmp(cmd, "EXIT") == 0){
         println("Stopping the CPU. Bye!");
         asm volatile("hlt");
@@ -15,22 +36,15 @@ void shell(char cmd[]) {
     } else if(strcmp(cmd, "VERSION") == 0){
         println("This is MKS v1.0");
     } else {
-        print("You Said: ");
+        print("Invalid Command: ");
         println(cmd);
     }
 }
 
-int kernel() {
-    char cmd[30];
-    clrscr();
-    println("Welcome to MKS - The Minimal Kernel System");
-    println("Created by M.V.Harish Kumar");
-    println("Enter <help> for more information");
-    
-    
-    for(;;) {
-        shell(cmd);
-    }
-    
-    return 0;
-} 
+void banner() {
+    cprintln("====================================================", VGA_COLOUR_BROWN, VGA_COLOUR_BLUE);
+    cprintln("|    Welcome to MKS - The Minimal Kernel System    |", VGA_COLOUR_BROWN, VGA_COLOUR_BLUE);
+    cprintln("|    Created by M.V.Harish Kumar                   |", VGA_COLOUR_BROWN, VGA_COLOUR_BLUE);
+    cprintln("|    Enter <help> for more information             |", VGA_COLOUR_BROWN, VGA_COLOUR_BLUE);
+    cprintln("====================================================", VGA_COLOUR_BROWN, VGA_COLOUR_BLUE);
+}

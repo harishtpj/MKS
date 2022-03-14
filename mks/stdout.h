@@ -1,66 +1,117 @@
-/* stdout.h - Standard Output of MKS */
 #include "str.h"
+#include <stdint.h>
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 25
 
-void terminal_scroll_up();
+uint16_t* terminal_buffer;
 
-char* fb = (char*) 0xB8000;
-int x = 0;
-int y = 0;
+enum vga_colour {
+    VGA_COLOUR_BLACK,
+    VGA_COLOUR_BLUE,
+    VGA_COLOUR_GREEN,
+    VGA_COLOUR_CYAN,
+    VGA_COLOUR_RED,
+    VGA_COLOUR_MAGENTA,
+    VGA_COLOUR_BROWN,
+    VGA_COLOUR_LIGHT_GREY,
+    VGA_COLOUR_DARK_GREY,
+    VGA_COLOUR_LIGHT_BLUE,
+    VGA_COLOUR_LIGHT_GREEN,
+    VGA_COLOUR_LIGHT_CYAN,
+    VGA_COLOUR_LIGHT_RED,
+    VGA_COLOUR_LIGHT_MAGENTA,
+    VGA_COLOUR_LIGHT_BROWN,
+    VGA_COLOUR_WHITE,
+};
 
-void clrscr() {
-    unsigned int j = 0;
-    while(j < VGA_WIDTH * VGA_HEIGHT * 2) {
-		/* blank character */
-		fb[j] = ' ';
-		/* attribute-byte - light grey on black screen */
-		fb[j+1] = 0x07; 		
-		j = j + 2;
-	}
+static inline uint8_t vga_entry_colour(enum vga_colour foreground, enum vga_colour background){
+    return foreground | (background << 4);
 }
 
-void putc(unsigned int i, char c, unsigned char fg, unsigned char bg) {
-    fb[i] = c;
-    fb[i + 1] = ((fg & 0x0F) << 4) | (bg & 0x0F);
+static inline uint16_t vga_entry(unsigned char c, uint8_t colour){
+    return (uint16_t) c | ((uint16_t) colour << 8);
 }
 
-void putchar(unsigned int i, char c) {
-    fb[i] = c;
-    fb[i + 1] = 0x07;
+void terminal_putcharat(char c, uint16_t colour, size_t x, size_t y){
+    const size_t index = y * VGA_WIDTH + x;
+    terminal_buffer[index] = vga_entry(c, colour);
 }
 
-void print(char str[]) {
-    int pos = 2 * x + 160 * y;
-    int len = strlen(str);
-    for(int i = 0; i < len; i++) {
-        putchar(pos, str[i]);
-        x++;
-        pos = 2 * x + 160 * y;
+size_t terminal_row;
+size_t terminal_column;
+uint8_t terminal_colour;
+
+void clrscr(){
+    for(size_t y = 0; y < VGA_HEIGHT; y++){
+        for(size_t x = 0; x < VGA_WIDTH; x++){
+            const size_t index = y * VGA_WIDTH + x;
+            terminal_buffer[index] = vga_entry(' ', terminal_colour);
+        }
     }
 }
-void println(char str[]) {
-    int pos = 2 * x + 160 * y;
-    int len = strlen(str);
-    for(int i = 0; i < len; i++) {
-        putchar(pos, str[i]);
-        x++;
-        pos = 2 * x + 160 * y;
+
+void terminal_init(){
+    terminal_row = 0;
+    terminal_column = 0;
+    terminal_colour = vga_entry_colour(VGA_COLOUR_WHITE, VGA_COLOUR_BLUE);
+    terminal_buffer = (uint16_t *) 0xB8000;
+    clrscr();
+}
+
+void terminal_scroll_up(){
+    int i;
+    for(i = 0; i < (VGA_WIDTH*VGA_HEIGHT-80); i++)
+        terminal_buffer[i] = terminal_buffer[i+80];
+    for(i = 0; i < VGA_WIDTH; i++)
+        terminal_buffer[(VGA_HEIGHT - 1) * VGA_WIDTH + i] = vga_entry(' ', terminal_colour);
+}
+
+void putchar(char c){
+    if(terminal_column == VGA_WIDTH || c == '\n'){
+        terminal_column = 0;
+        if(terminal_row == VGA_HEIGHT-1){
+            terminal_scroll_up();
+        } else {
+            terminal_row++;
+        }
     }
-    x = 0;
-    putchar(pos, ' ');
-    y++;
+    if(c == '\n') return;
+    terminal_putcharat(c, terminal_colour, terminal_column++, terminal_row);
+}
+ 
+void terminal_write(const char* data, size_t size){
+    for (size_t i = 0; i < size; i++)
+        putchar(data[i]);
 }
 
-void nl() {
-    int pos = 2 * x + 160 * y;
-    x = 0;
-    putchar(pos, ' ');
-    y++;
+void print(char* data){
+    terminal_write(data, strlen(data));
 }
 
-void putint(int num) {
-  char str_num[digit_count(num)+1];
-  itoa(num, str_num);
-  println(str_num);
+void println(char* data){
+    strcat(data, "\n");
+    terminal_write(data, strlen(data));
+}
+
+void nl(){
+    print("\n");
+}
+
+void cprint(char* data, enum vga_colour fg, enum vga_colour bg){
+    uint8_t oldcolour = terminal_colour;
+    terminal_colour = vga_entry_colour(fg, bg);
+    print(data);
+    terminal_colour = oldcolour;
+}
+void cprintln(char* data, enum vga_colour fg, enum vga_colour bg){
+    uint8_t oldcolour = terminal_colour;
+    terminal_colour = vga_entry_colour(fg, bg);
+    println(data);
+    terminal_colour = oldcolour;
+}
+
+void terminal_writeint(unsigned long n){
+    if(n/10)
+        terminal_writeint(n/10);
+    putchar((n % 10) + '0');
 }

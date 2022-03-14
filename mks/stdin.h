@@ -37,23 +37,6 @@ void sleep(uint32 timer_count)
   wait_for_io(timer_count);
 }
 
-void test_input()
-{
-  char ch = 0;
-  char keycode = 0;
-  do{
-    keycode = get_input_keycode();
-    if(keycode == KEY_ENTER){
-      nl();
-    }else{
-      ch = get_ascii_char(keycode);
-      putchar(2 * x + 160 * y ,ch);
-		  x++;
-    }
-    sleep(0x02FFFFFF);
-  }while(ch > 0);
-}
-
 void input(char data[]) {
   char ch = 0;
   char keycode = 0;
@@ -63,8 +46,7 @@ void input(char data[]) {
     keycode = get_input_keycode();
     ch = get_ascii_char(keycode);
     if(ch == '\n') { ch = 0;}
-    putchar(2 * x + 160 * y ,ch);
-		x++;
+    putchar(ch);
     *dataPtr++ = ch;
     sleep(CALC_SLEEP);
   }while(ch > 0);
