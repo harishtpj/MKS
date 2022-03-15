@@ -1,3 +1,6 @@
+#ifndef STDOUT_H
+#define STDOUT_H
+
 #include "str.h"
 #include <stdint.h>
 #define VGA_WIDTH 80
@@ -48,6 +51,8 @@ void clrscr(){
             terminal_buffer[index] = vga_entry(' ', terminal_colour);
         }
     }
+    terminal_row = 0;
+    terminal_column = 0;
 }
 
 void terminal_init(){
@@ -110,8 +115,10 @@ void cprintln(char* data, enum vga_colour fg, enum vga_colour bg){
     terminal_colour = oldcolour;
 }
 
-void terminal_writeint(unsigned long n){
+void putint(unsigned long n){
     if(n/10)
-        terminal_writeint(n/10);
+        putint(n/10);
     putchar((n % 10) + '0');
 }
+
+#endif

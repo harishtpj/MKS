@@ -1,4 +1,7 @@
-#include "maps/kbdmap.h"
+#ifndef STDIN_H
+#define STDIN_H
+
+#include "kbdmap.h"
 #include "stdout.h"
 
 #define CALC_SLEEP 50331647
@@ -53,3 +56,5 @@ void input(char data[]) {
 
   nl(); 
 }
+
+#endif

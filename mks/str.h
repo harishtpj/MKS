@@ -1,4 +1,8 @@
+#ifndef STR_H
+#define STR_H
+
 #include <stddef.h>
+#include <stdbool.h>
 
 size_t strlen (char *str) {
     return (*str) ? strlen(++str) + 1 : 0;
@@ -99,3 +103,90 @@ void *memset(void *s, int c,  unsigned int len){
     }
     return s;
 }
+
+bool is_delim(char c, char *delim) {
+  while(*delim != '\0')
+  {
+    if(c == *delim)
+      return true;
+    delim++;
+  }
+  return false;
+}
+
+char *strtok(char *s, char *delim) {
+  static char *p; // start of the next search 
+  if(!s)
+  {
+    s = p;
+  }
+  if(!s)
+  {
+    // user is bad user 
+    return NULL;
+  }
+
+  // handle beginning of the string containing delims
+  while(1)
+  {
+    if(is_delim(*s, delim))
+    {
+      s++;
+      continue;
+    }
+    if(*s == '\0')
+    {
+      return NULL; // we've reached the end of the string
+    }
+    // now, we've hit a regular character. Let's exit the
+    // loop, and we'd need to give the caller a string
+    // that starts here.
+    break;
+  }
+
+  char *ret = s;
+  while(1)
+  {
+    if(*s == '\0')
+    {
+      p = s; // next exec will return NULL
+      return ret;
+    }
+    if(is_delim(*s, delim))
+    {
+      *s = '\0';
+      p = s + 1;
+      return ret;
+    }
+    s++;
+  }
+}
+
+char *strchr(char *s, char c) {
+   while(*s != c && *s != '\0') {
+      s++;
+   }
+   if(*s == c) {
+      return s;
+   }else {
+      return NULL;
+   }
+}
+
+long atoi(const char* S) {
+    long num = 0;
+ 
+    int i = 0;
+ 
+    // run till the end of the string is reached, or the
+    // current character is non-numeric
+    while (S[i] && (S[i] >= '0' && S[i] <= '9'))
+    {
+        num = num * 10 + (S[i] - '0');
+        i++;
+    }
+ 
+    return num;
+}
+
+#endif
