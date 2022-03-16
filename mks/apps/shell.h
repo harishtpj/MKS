@@ -3,6 +3,8 @@
 #define SHELL_H
 
 #include "../stdin.h"
+#include "../time.h"
+#include "stack.h"
 
 void userinfo(char uname[]){
     print("PLEASE ENTER YOUR NAME (UPTO 8 CHARS): ");
@@ -10,6 +12,32 @@ void userinfo(char uname[]){
     print("WELCOME, ");
     print(uname);
     println("!");
+}
+
+void help(){
+    print("");
+    print("PRINT   : PRINTS STRING");
+    nl();
+    print("CLR     : CLEARS SCREEN");
+    nl();
+    print("TIME    : SHOWS CMOS TIME(EXPERIMENTAL)");
+    nl();
+    print("VERSION : PRINTS OS VERSION");
+    nl();
+    print("EXIT    : EXIT AND SHUTDOWNS MKS");
+    nl();
+    print("HELP    : SHOWS HELP MSG");
+    nl();
+    print("PUSH    : PUSH UNSIGNED INT");
+    nl();
+    print("POP     : POP UNSIGNED INT");
+    nl();
+    print("PRSTK   : PRINT STACK");
+    nl();
+    print("ISE     : SAYS IF STACK IS EMPTY");
+    nl();
+    print("ISF     : SAYS IF STACK IS FULL");
+    nl();
 }
 
 void exec(char cmd[]) {
@@ -21,12 +49,39 @@ void exec(char cmd[]) {
         println("Stopping the CPU. Bye!");
         asm volatile("hlt");
     } else if(strcmp(cmd, "VERSION") == 0){
-        println("This is MKS v1.0");
+        println("This is MKS v1.0 created by M.V.Harish Kumar");
     } else if(strcmp(cmd, "PRINT") == 0){
         char printstr[50];
         print("PLEASE ENTER STR: ");
         input(printstr);
         println(printstr);
+    } else if(strcmp(cmd, "HELP") == 0){
+        help();
+    } else if(strcmp(cmd, "TIME") == 0){
+        get_time();
+        print_time();
+        nl();
+    } else if(strcmp(cmd, "PUSH") == 0){
+        char ni[50];
+        print("PLEASE ENTER NO TO PUSH: ");
+        input(ni);
+        push(atoi(ni));
+    } else if(strcmp(cmd, "PRSTK") == 0){
+        printStack();
+    } else if(strcmp(cmd, "POP") == 0){
+        pop();
+    } else if(strcmp(cmd, "ISE") == 0){
+        if(isempty()) {
+            println("TRUE");
+        } else {
+            println("FALSE");
+        } 
+    } else if(strcmp(cmd, "ISF") == 0){
+        if(isfull()) {
+            println("TRUE");
+        } else {
+            println("FALSE");
+        } 
     } else {
         print("Invalid Command: ");
         println(cmd);
@@ -48,10 +103,10 @@ void shell(char uname[]) {
 void banner() {
     cprintln("====================================================", VGA_COLOUR_BROWN, VGA_COLOUR_BLUE);
     cprintln("|    WELCOME TO MKS - THE MINIMAL KERNEL SYSTEM    |", VGA_COLOUR_BROWN, VGA_COLOUR_BLUE);
-    cprintln("|    CREATED BY M.V.Harish KUMAR                   |", VGA_COLOUR_BROWN, VGA_COLOUR_BLUE);
+    cprintln("|    CREATED BY M.V.HARISH KUMAR                   |", VGA_COLOUR_BROWN, VGA_COLOUR_BLUE);
       cprint("  ", VGA_COLOUR_BROWN, VGA_COLOUR_BLUE);
       cprint("|    ENTER ", VGA_COLOUR_BROWN, VGA_COLOUR_BLUE);
-      cprint("<help> ", VGA_COLOUR_RED, VGA_COLOUR_BLUE);
+      cprint("<HELP> ", VGA_COLOUR_RED, VGA_COLOUR_BLUE);
       cprintln("for more information             |", VGA_COLOUR_BROWN, VGA_COLOUR_BLUE);
     cprintln("====================================================", VGA_COLOUR_BROWN, VGA_COLOUR_BLUE);
 }

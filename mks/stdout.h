@@ -115,9 +115,10 @@ void cprintln(char* data, enum vga_colour fg, enum vga_colour bg){
     terminal_colour = oldcolour;
 }
 
-void putint(unsigned long n){
-    if(n/10)
+void putint(unsigned int n){
+    if(n/10){
         putint(n/10);
+    }
     putchar((n % 10) + '0');
 }
 
