@@ -19,3 +19,8 @@ git clone https://github.com/harishtpj/MKS.git
 cd mks
 make
 ```
+
+# 📝 License
+
+#### Copyright © 2022 [M.V.Harish Kumar](https://github.com/harishtpj). <br>
+#### This project is [MIT](https://github.com/harishtpj/MKS/blob/main/LICENSE) licensed.
