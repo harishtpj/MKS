@@ -25,6 +25,7 @@ SOFTWARE. */
 #include "../stdin.h"
 #include "../time.h"
 #include "stack.h"
+#include "../ramfs/fs.h"
 
 void userinfo(char uname[]){
     print("PLEASE ENTER YOUR NAME (UPTO 8 CHARS): ");
@@ -102,7 +103,17 @@ void exec(char cmd[]) {
         } else {
             println("FALSE");
         } 
-    } else {
+    } else if(strcmp(cmd, "DIR") == 0){
+        list_files();
+    } else if(strcmp(cmd, "TYPE") == 0){
+        char fname[15];
+        char fcont[10000];
+        print("PLEASE ENTER FILE NAME: ");
+        input(fname);
+        file* f = open_file(fname);
+        fread(*f, fcont);
+        println(fcont);
+    }  else {
         print("Invalid Command: ");
         println(cmd);
     }

@@ -143,4 +143,11 @@ void putint(unsigned int n){
     putchar((n % 10) + '0');
 }
 
+void putcn(char c, int count){
+    for (int i = 0; i < count; i++) {
+        putchar(c);
+    }
+    
+}
+
 #endif

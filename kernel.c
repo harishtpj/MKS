@@ -31,12 +31,18 @@ int kernel() {
     char uname[10];
 
     terminal_init();
+    putint(strlen("Hello"));
     clrscr();
     banner();
     nl();
     
     userinfo(uname);
     nl();
+    create_file("HELLO.TXT", "Hello, World!");
+    create_file("WELCOME.TXT", "Welcome to MKS! This is the v1.0 of this OS.\n"
+                                "This is just a sample text file inserted into\n"
+                                "RAMFS File System.");
+
     shell(uname);
 
     
