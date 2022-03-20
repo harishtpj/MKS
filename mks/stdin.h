@@ -69,9 +69,14 @@ void input(char data[]) {
   do{
     keycode = get_input_keycode();
     ch = get_ascii_char(keycode);
-    if(ch == '\n') { ch = 0;}
-    putchar(ch);
-    *dataPtr++ = ch;
+    if (ch == '\n') { ch = 0; }
+    if(ch == '\b') {
+      ungetchar();
+      *dataPtr-- = '\0';
+    } else {
+      putchar(ch);
+      *dataPtr++ = ch;
+    }
     sleep(CALC_SLEEP);
   }while(ch > 0);
 

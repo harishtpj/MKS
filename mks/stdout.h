@@ -48,6 +48,8 @@ enum vga_colour {
     VGA_COLOUR_WHITE,
 };
 
+void ungetchar();
+
 static inline uint8_t vga_entry_colour(enum vga_colour foreground, enum vga_colour background){
     return foreground | (background << 4);
 }
@@ -102,6 +104,7 @@ void putchar(char c){
         }
     }
     if(c == '\n') return;
+    if(c == '\b') ungetchar();
     terminal_putcharat(c, terminal_colour, terminal_column++, terminal_row);
 }
  
@@ -147,7 +150,15 @@ void putcn(char c, int count){
     for (int i = 0; i < count; i++) {
         putchar(c);
     }
-    
+}
+
+void ungetchar() {
+    if((terminal_column * VGA_WIDTH + terminal_row) > 0) {
+        terminal_putcharat(0, terminal_colour, terminal_column--, terminal_row);
+    }
+
+    // set last printed character to 0
+    terminal_putcharat(' ', terminal_colour, terminal_column, terminal_row);
 }
 
 #endif

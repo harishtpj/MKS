@@ -137,6 +137,7 @@ char get_ascii_char(uint8 key_code) {
     case KEY_FORESLHASH : return '/';
     case KEY_SPACE : return ' ';
     case KEY_ENTER : return '\n';
+    case KEY_BACKSPACE : return '\b';
     default : return 0;
   }
 }

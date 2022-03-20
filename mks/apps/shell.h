@@ -26,6 +26,7 @@ SOFTWARE. */
 #include "../time.h"
 #include "stack.h"
 #include "../ramfs/fs.h"
+#include "../ramfs/fsutils.h"
 
 void userinfo(char uname[]){
     print("PLEASE ENTER YOUR NAME (UPTO 8 CHARS): ");
@@ -36,29 +37,48 @@ void userinfo(char uname[]){
 }
 
 void help(){
-    print("");
-    print("PRINT   : PRINTS STRING");
-    nl();
-    print("CLR     : CLEARS SCREEN");
-    nl();
-    print("TIME    : SHOWS CMOS TIME(EXPERIMENTAL)");
-    nl();
-    print("VERSION : PRINTS OS VERSION");
-    nl();
-    print("EXIT    : EXIT AND SHUTDOWNS MKS");
-    nl();
-    print("HELP    : SHOWS HELP MSG");
-    nl();
-    print("PUSH    : PUSH UNSIGNED INT");
-    nl();
-    print("POP     : POP UNSIGNED INT");
-    nl();
-    print("PRSTK   : PRINT STACK");
-    nl();
-    print("ISE     : SAYS IF STACK IS EMPTY");
-    nl();
-    print("ISF     : SAYS IF STACK IS FULL");
-    nl();
+    //print("");
+    char opt[2];
+    println("THIS HELP MENU IS CLASSIFIED INTO 3 TYPES:");
+    print("BASIC - B\nSTACK - S\nFILE - F\n");
+    print("ENTER YOUR OPTION: ");
+    input(opt);
+    if(strcmp(opt, "B") == 0) {
+        print("PRINT   : PRINTS STRING");
+        nl();
+        print("CLR     : CLEARS SCREEN");
+        nl();
+        print("TIME    : SHOWS CMOS TIME(EXPERIMENTAL)");
+        nl();
+        print("VERSION : PRINTS OS VERSION");
+        nl();
+        print("EXIT    : EXIT AND SHUTDOWNS MKS");
+        nl();
+        print("HELP    : SHOWS HELP MSG");
+        nl();
+    }else if(strcmp(opt, "S") == 0) {
+        print("PUSH    : PUSH UNSIGNED INT");
+        nl();
+        print("POP     : POP UNSIGNED INT");
+        nl();
+        print("PRSTK   : PRINT STACK");
+        nl();
+        print("ISE     : SAYS IF STACK IS EMPTY");
+        nl();
+        print("ISF     : SAYS IF STACK IS FULL");
+        nl();
+    } else if(strcmp(opt, "F") == 0) {
+        print("DIR      : LIST FILES IN RAMFS");
+        nl();
+        print("TYPE     : PRINT CONTENTS OF FILE");
+        nl();
+        print("NEW FILE : CREATES NEW FILE");
+        nl();
+    } else {
+        print("INVALID OPTION: ");
+        println(opt);
+    }
+
 }
 
 void exec(char cmd[]) {
@@ -113,8 +133,10 @@ void exec(char cmd[]) {
         file* f = open_file(fname);
         fread(*f, fcont);
         println(fcont);
-    }  else {
-        print("Invalid Command: ");
+    } else if(strcmp(cmd, "NEW FILE") == 0){
+        new_file();
+    } else {
+        print("INVALID COMMAND: ");
         println(cmd);
     }
 }
