@@ -37,9 +37,10 @@ void userinfo(char uname[]){
 }
 
 void help(){
-    //print("");
+    print("");
     char opt[2];
-    println("THIS HELP MENU IS CLASSIFIED INTO 3 TYPES:");
+    print("THIS HELP MENU IS CLASSIFIED INTO 3 TYPES:");
+    nl();
     print("BASIC - B\nSTACK - S\nFILE - F\n");
     print("ENTER YOUR OPTION: ");
     input(opt);
@@ -68,11 +69,17 @@ void help(){
         print("ISF     : SAYS IF STACK IS FULL");
         nl();
     } else if(strcmp(opt, "F") == 0) {
-        print("DIR      : LIST FILES IN RAMFS");
+        print("DIR         : LIST FILES IN RAMFS");
         nl();
-        print("TYPE     : PRINT CONTENTS OF FILE");
+        print("TYPE        : PRINT CONTENTS OF FILE");
         nl();
-        print("NEW FILE : CREATES NEW FILE");
+        print("NEW FILE    : CREATES NEW FILE");
+        nl();
+        print("APPEND FILE : APPENDS EXISTING FILE");
+        nl();
+        print("EDIT FILE   : EDITS EXISTING FILE");
+        nl();
+        print("DELETE FILE : DELETES EXISTING FILE");
         nl();
     } else {
         print("INVALID OPTION: ");
@@ -131,10 +138,21 @@ void exec(char cmd[]) {
         print("PLEASE ENTER FILE NAME: ");
         input(fname);
         file* f = open_file(fname);
-        fread(*f, fcont);
-        println(fcont);
+        if (strcmp(f->fname, " ") == 0) {
+            print("NO FILE FOUND: "); 
+            println(fname);
+        } else {
+            fread(f, fcont);
+            println(fcont);
+        }
     } else if(strcmp(cmd, "NEW FILE") == 0){
         new_file();
+    } else if(strcmp(cmd, "APPEND FILE") == 0){
+        append_file();
+    } else if(strcmp(cmd, "EDIT FILE") == 0){
+        edit_file();
+    } else if(strcmp(cmd, "DELETE FILE") == 0){
+        delete_file();
     } else {
         print("INVALID COMMAND: ");
         println(cmd);

@@ -45,20 +45,57 @@ void create_file(char* fname, char* fcontent) {
     fsc++;
 }
 
-file* open_file(char fname[]) {
-    int fp;
+int get_file_index(char fname[]) {
+    int fp = -1;
     for (int i = 0; i < fsc; i++) {
         if(strcmp(fs[i].fname, fname) == 0){
             fp = i;
             break;
         }
     }
-    file* f = &fs[fp];
-    return f;
+    return fp;
 }
 
-void fread(file f, char cont[]){
-    strcpy(cont, f.fcontent);
+file* open_file(char fname[]) {
+    int fp = get_file_index(fname);
+    if (fp == -1) { 
+        file File;
+        strcpy(File.fname, " ");
+        strcpy(File.fcontent," ");
+        File.size = 0;
+        file* f = &File;
+        return f;
+    } else {
+       file* f = &fs[fp];
+       return f;
+    }
+}
+
+void fread(file* f, char cont[]){
+    strcpy(cont, f->fcontent);
+}
+
+void fwrite(file* f, char mode, char cont[]){
+    if (mode == 'w') {
+        strcpy(f->fcontent, cont);
+        f->size = strlen(f->fcontent);
+    } else if (mode == 'a') {
+        strcat(f->fcontent, cont);
+        f->size = strlen(f->fcontent);
+    }
+}
+
+int delfile(char* fname) {
+    int fp = get_file_index(fname);
+    if (fp == -1) { 
+        return 0;
+    } else {
+       for (int i = fp-1; i  < fsc - 1; i++) {
+        fs[i] = fs[i + 1];
+       }
+       fsc--;
+       return 1;
+    }
 }
 
 #endif
