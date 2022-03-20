@@ -22,10 +22,8 @@ SOFTWARE. */
 #include "mks/stdin.h"
 #include "mks/stdout.h"
 #include "mks/apps/shell.h"
-
-void shell();
-void exec(char cmd[]);
-void banner();
+#include "mks/apps/banners.h"
+#include "mks/ramfs/fsutils.h"
 
 int kernel() {
     char uname[10];
@@ -33,16 +31,13 @@ int kernel() {
     terminal_init();
     putint(strlen("Hello"));
     clrscr();
-    banner();
+    v2_banner();
     nl();
-    
+
     userinfo(uname);
     nl();
-    create_file("HELLO.TXT", "Hello, World!");
-    create_file("WELCOME.TXT", "Welcome to MKS! This is the v1.0 of this OS.\n"
-                                "This is just a sample text file inserted into\n"
-                                "RAMFS File System.");
 
+    init_fs();
     shell(uname);
 
     

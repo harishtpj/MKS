@@ -94,10 +94,10 @@ void exec(char cmd[]) {
     } else if(strcmp(cmd, "CLR") == 0){
         clrscr();
     } else if(strcmp(cmd, "EXIT") == 0){
-        println("Stopping the CPU. Bye!");
+        println("STOPPING THE CPU. BYE!");
         asm volatile("hlt");
     } else if(strcmp(cmd, "VERSION") == 0){
-        println("This is MKS v1.0 created by M.V.Harish Kumar");
+        println("THIS IS MKS v2.0 CREATED MY M.V.HARISH KUMAR");
     } else if(strcmp(cmd, "PRINT") == 0){
         char printstr[50];
         print("PLEASE ENTER STR: ");
@@ -169,17 +169,6 @@ void shell(char uname[]) {
         input(cmd);
         exec(cmd);
     }
-}
-
-void banner() {
-    cprintln("====================================================", VGA_COLOUR_BROWN, VGA_COLOUR_BLUE);
-    cprintln("|    WELCOME TO MKS - THE MINIMAL KERNEL SYSTEM    |", VGA_COLOUR_BROWN, VGA_COLOUR_BLUE);
-    cprintln("|    CREATED BY M.V.HARISH KUMAR                   |", VGA_COLOUR_BROWN, VGA_COLOUR_BLUE);
-      cprint("  ", VGA_COLOUR_BROWN, VGA_COLOUR_BLUE);
-      cprint("|    ENTER ", VGA_COLOUR_BROWN, VGA_COLOUR_BLUE);
-      cprint("<HELP> ", VGA_COLOUR_RED, VGA_COLOUR_BLUE);
-      cprintln("for more information             |", VGA_COLOUR_BROWN, VGA_COLOUR_BLUE);
-    cprintln("====================================================", VGA_COLOUR_BROWN, VGA_COLOUR_BLUE);
 }
 
 #endif

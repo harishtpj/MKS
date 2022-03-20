@@ -109,4 +109,14 @@ void delete_file() {
     }
 }
 
+void init_fs() {
+
+    create_file("HELLO.TXT", "Hello, World!");
+    create_file("WELCOME.TXT", "Welcome to MKS! This is the v2.0 of this OS.\n"
+                               "This is just a sample text file inserted into\n"
+                               "RAMFS File System.");
+    create_file("SAMPLE.TXT", "THIS IS JUST A SAMPLE FILE PROVIDED FOR FILE FUNCTIONS.\n");
+
+}
+
 #endif
