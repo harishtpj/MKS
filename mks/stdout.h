@@ -49,6 +49,9 @@ enum vga_colour {
 };
 
 void ungetchar();
+void vga_set_cursor_pos(uint8 x, uint8 y);
+void vga_disable_cursor();
+
 
 static inline uint8_t vga_entry_colour(enum vga_colour foreground, enum vga_colour background){
     return foreground | (background << 4);
@@ -61,11 +64,13 @@ static inline uint16_t vga_entry(unsigned char c, uint8_t colour){
 void terminal_putcharat(char c, uint16_t colour, size_t x, size_t y){
     const size_t index = y * VGA_WIDTH + x;
     terminal_buffer[index] = vga_entry(c, colour);
+    vga_set_cursor_pos(x+1, y);
 }
 
 size_t terminal_row;
 size_t terminal_column;
 uint8_t terminal_colour;
+static uint8 cursor_pos_x = 0, cursor_pos_y = 0;
 
 void clrscr(){
     for(size_t y = 0; y < VGA_HEIGHT; y++){
@@ -76,14 +81,20 @@ void clrscr(){
     }
     terminal_row = 0;
     terminal_column = 0;
+    cursor_pos_x = 0;
+    cursor_pos_y = 0;
+    vga_set_cursor_pos(cursor_pos_x, cursor_pos_y);
 }
 
 void terminal_init(){
     terminal_row = 0;
     terminal_column = 0;
+    cursor_pos_x = 0;
+    cursor_pos_y = 0;
     terminal_colour = vga_entry_colour(VGA_COLOUR_WHITE, VGA_COLOUR_BLUE);
     terminal_buffer = (uint16_t *) 0xB8000;
     clrscr();
+    //vga_disable_cursor();
 }
 
 void terminal_scroll_up(){
@@ -159,6 +170,44 @@ void ungetchar() {
 
     // set last printed character to 0
     terminal_putcharat(' ', terminal_colour, terminal_column, terminal_row);
+}
+
+/**
+ * write a given byte to given port number
+ */
+void outportb(uint16 port, uint8 val) {
+    asm volatile("outb %1, %0" :: "dN"(port), "a"(val));
+}
+
+/**
+ * read 2 bytes(short) from given port number
+ */
+uint16 inports(uint16 port) {
+    uint16 rv;
+    asm volatile ("inw %1, %0" : "=a" (rv) : "dN" (port));
+    return rv;
+}
+
+/**
+ * set cursor position to given (x, y)
+ * by writing to CRT controller registers
+ */
+void vga_set_cursor_pos(uint8 x, uint8 y) {
+    // The screen is 80 characters wide...
+    uint16 cursorLocation = y * VGA_WIDTH + x;
+    outportb(0x3D4, 14);
+    outportb(0x3D5, cursorLocation >> 8);
+    outportb(0x3D4, 15);
+    outportb(0x3D5, cursorLocation);
+}
+
+/**
+ * disable blinking top-left cursor
+ * by writing to CRT controller registers
+ */
+void vga_disable_cursor() {
+    outportb(0x3D4, 10);
+    outportb(0x3D5, 32);
 }
 
 #endif
